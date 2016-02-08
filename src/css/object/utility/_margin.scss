@@ -1,0 +1,10 @@
+// Margin
+//------------------------------------------------------
+.u-margin {
+  &--b {
+    margin-bottom: $margin-bottom;
+  }
+  &--l {
+    margin-left: $margin-bottom;
+  }
+}

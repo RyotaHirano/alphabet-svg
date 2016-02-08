@@ -1,0 +1,19 @@
+extends /_layouts/base
+
+block vars
+  include /_settings/data
+  - var currentPath = './';
+  
+block content
+  include /_partials/g-header
+  .l-top.js-wrapper
+    .l-content
+      .p-top__form.c-form
+        input.c-input.c-input--alphabet.js-input(type="text" pattern="^[0-9A-Za-z]+$")
+        button.c-btn.c-btn--play.js-playAnimation PLAY
+      .p-top__stage.js-stage
+      
+  include /_partials/g-footer
+  
+block js
+  script(src="./assets/js/main.js")

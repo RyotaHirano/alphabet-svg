@@ -1,0 +1,14 @@
+// Header
+//------------------------------------------------------
+.l-header {
+  width: 960px;
+  height: 60px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  &__title {
+    width: auto;
+    line-height: 60px;
+    font-family: $font-family;
+  }
+}

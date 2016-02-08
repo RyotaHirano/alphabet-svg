@@ -1,0 +1,20 @@
+// Button
+//------------------------------------------------------
+@mixin c-btn {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  &:hover {
+    opacity: 0.9;
+  }
+}
+.c-btn {
+  &--play {
+    @include c-btn;
+    padding: 0.8rem 3rem;
+    font-size: 2.4rem;
+    line-height: 1.4rem;
+    font-family: $font-family;
+  }
+}
