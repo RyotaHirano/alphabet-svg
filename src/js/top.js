@@ -9,6 +9,33 @@ export default function top() {
   const duration = 1;
   const pathArr = [];
   let timerArr = [];
+  const frame = 30;
+
+  window.requestAnimFrame = (function() {
+    return (
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      function(callback) {
+        window.setTimeout(callback, 1000 / frame);
+      }
+    );
+  })();
+
+  window.cancelAnimFrame = (function() {
+    return (
+      window.cancelAnimationFrame ||
+      window.webkitCancelAnimationFrame ||
+      window.mozCancelAnimationFrame ||
+      window.oCancelAnimationFrame ||
+      window.msCancelAnimationFrame ||
+      function(id) {
+        window.clearTimeout(id);
+      }
+    );
+  })();
 
   const lineLength = (x1, y1, x2, y2) => {
     const length = Math.sqrt((x2 -= x1) * x2 + (y2 -= y1) * y2);
@@ -27,12 +54,19 @@ export default function top() {
   class DrawSvg {
     constructor(type, el) {
       this.el = el;
-      this.type = type;
+      this.type = el.tagName;
+      this.currentFrame = 0;
+      this.totalFrame = frame;
+      this.handle = 0;
+
       if (this.type === 'path') {
         this.elLength = el.getTotalLength();
       } else if (this.type === 'line') {
         this.elLength = getTotalLineLength(this.el);
       }
+
+      this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
+      this.el.style.strokeDashoffset = this.elLength;
     }
 
     draw() {
@@ -40,13 +74,32 @@ export default function top() {
       this.playAnimation();
     }
 
-    playAnimation() {
-      this.el.style.transition = this.el.style.WebkitTransition = 'none';
-      this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
+    resetAnimation() {
       this.el.style.strokeDashoffset = this.elLength;
-      this.el.getBoundingClientRect();
-      this.el.style.transition = this.el.style.WebkitTransition = `stroke-dashoffset ${duration}s ease-in-out`;
-      this.el.style.strokeDashoffset = '0';
+      this.currentFrame = 0;
+    }
+
+    // playAnimation() {
+    //   this.el.style.transition = this.el.style.WebkitTransition = 'none';
+    //   this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
+    //   this.el.style.strokeDashoffset = this.elLength;
+    //   this.el.getBoundingClientRect();
+    //   this.el.style.transition = this.el.style.WebkitTransition = `stroke-dashoffset ${duration}s ease-in-out`;
+    //   this.el.style.strokeDashoffset = '0';
+    // }
+
+    playAnimation() {
+      const _this = this;
+      const progress = this.currentFrame / this.totalFrame;
+      if (progress > 1) {
+        window.cancelAnimFrame(this.handle);
+      } else {
+        this.currentFrame++;
+        this.el.style.strokeDashoffset = Math.floor(this.elLength * (1 - progress));
+        this.handle = window.requestAnimFrame(function() {
+          _this.playAnimation();
+        });
+      }
     }
   }
 
@@ -58,6 +111,7 @@ export default function top() {
       pathElem.setAttributeNS(null, 'width', `${charaWidth}px`);
       pathElem.setAttributeNS(null, 'height', '200px');
       pathElem.setAttributeNS(null, 'd', data.d);
+      pathElem.setAttributeNS(null, 'class', 'c-path');
     } else if (type === 'line') {
       pathElem = document.createElementNS(xmlns, 'line');
       pathElem.setAttributeNS(null, 'width', `${charaWidth}px`);
@@ -66,6 +120,7 @@ export default function top() {
       pathElem.setAttributeNS(null, 'y1', data.y1);
       pathElem.setAttributeNS(null, 'x2', data.x2);
       pathElem.setAttributeNS(null, 'y2', data.y2);
+      pathElem.setAttributeNS(null, 'class', 'c-line');
     }
     pathElem.style.display = 'block';
 
@@ -126,7 +181,7 @@ export default function top() {
     }
   };
 
-  const resetOpacity = () => {
+  const reset = () => {
     const pathAll = document.querySelectorAll('path');
     const lineAll = document.querySelectorAll('line');
     const lineCount = lineAll.length;
@@ -141,6 +196,12 @@ export default function top() {
         const target = lineAll[i];
         target.style.opacity = 0;
       }
+    }
+
+    const length = pathArr.length;
+    for (let j = 0; j < length; j++) {
+      const target = pathArr[j];
+      target.resetAnimation();
     }
   };
 
@@ -191,7 +252,7 @@ export default function top() {
   const bindPlayAnimationBtn = () => {
     const btn = $('.js-playAnimation');
     btn.on('click.playAnimation', () => {
-      resetOpacity();
+      reset();
       delTimer();
       playAnimation();
     });
