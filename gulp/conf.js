@@ -67,7 +67,7 @@ export const imagemin = {
 };
 
 export const uglify = {
-  src: [`${DIR.DST}${DIR.PATH}/**/*.js`],
+  src: [`${DIR.DST}${DIR.PATH}/assets/js/*.js`],
   dst: `${DIR.BUILD}/assets/js`
 };
 
@@ -79,9 +79,9 @@ export const copy = {
   build: {
     src: [
       `${DIR.DST}${DIR.PATH}/**`,
-      `!${DIR.DST}${DIR.PATH}/js/**`,
-      `!${DIR.DST}${DIR.PATH}/${DIR.IMG}`,
-      `!${DIR.DST}${DIR.PATH}/${DIR.IMG}/**`
+      `!${DIR.DST}${DIR.PATH}/assets/js/**`,
+      `!${DIR.DST}${DIR.PATH}/assets/${DIR.IMG}`,
+      `!${DIR.DST}${DIR.PATH}/assets/${DIR.IMG}/**`
     ],
     dst: `${DIR.BUILD}`
   }
