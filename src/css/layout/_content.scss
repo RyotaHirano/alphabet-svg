@@ -4,9 +4,10 @@
   width: 100%;
   min-width: 960px;
   height: auto;
-  margin: 40px auto;
+  margin: 0 auto;
+  padding: 40px 0;
 }
 
 .l-top {
-
+  transition: $bg-transition;
 }

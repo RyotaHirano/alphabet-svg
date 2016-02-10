@@ -11,9 +11,8 @@ block content
       .p-top__form.c-form
         input.c-input.c-input--alphabet.js-input(type="text" pattern="^[0-9A-Za-z]+$")
         button.c-btn.c-btn--play.js-playAnimation PLAY
-      svg(xmlns="http://www.w3.org/2000/svg" version="1.1").p-top__stage.js-stage
-      
+
+  include /_partials/stage
   include /_partials/g-footer
-  
 block js
   script(src="./assets/js/main.js")

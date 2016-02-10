@@ -17,4 +17,23 @@
     line-height: 1.4rem;
     font-family: $font-family;
   }
+
+  &-close {
+    &__line {
+      width: 28px;
+      height: 6px;
+      border-radius: 20px;
+      background: #000;
+      display: inline-block;
+      position: absolute;
+      top: 22px;
+      left: 11px;
+      &--01 {
+        transform: rotate(45deg);
+      }
+      &--02 {
+        transform: rotate(-45deg);
+      }
+    }
+  }
 }

@@ -11,9 +11,10 @@
   &--alphabet {
     width: 70%;
     min-width: 500px;
-    padding: 0.4rem 1.4rem;
-    margin: 0 auto;
+    padding: 0.6rem 1.4rem;
+    margin-right: 0.4em;
     display: inline-block;
+    border-radius: 5px;
     font-size: 4.2rem;
     font-family: $font-family;
     letter-spacing: 0.05em;

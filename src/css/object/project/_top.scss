@@ -1,11 +1,18 @@
 .p-top {
   &__form {
-
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
 
   &__stage {
-    width: 960px;
+    width: 100%;
     min-height: 400px;
-    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    margin-top: -200px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
 }

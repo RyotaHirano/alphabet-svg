@@ -1,4 +1,8 @@
 import $ from 'jquery';
+import debounce from 'lodash.debounce';
+import Stage from './util/stage';
+import changeBgColor from './util/changeBgColor';
+import resetBgColor from './util/resetBgColor';
 const svgData = require('./data/alphabet-svg.json');
 
 export default function top() {
@@ -10,6 +14,7 @@ export default function top() {
   const pathArr = [];
   let timerArr = [];
   const frame = 30;
+  let stageWrap;
 
   window.requestAnimFrame = (function() {
     return (
@@ -214,6 +219,14 @@ export default function top() {
     }
   };
 
+  const fitting = () => {
+    stageWrap.fitting();
+  };
+
+  const bindWindow = () => {
+    $(window).on('resize', debounce(fitting, 200));
+  };
+
   const bindInput = () => {
     const input = $('.js-input');
 
@@ -247,20 +260,41 @@ export default function top() {
       e.preventDefault();
       return false;
     });
+
+    input.on('focus', () => {
+      changeBgColor();
+    });
+
+    input.on('focusout', () => {
+      resetBgColor();
+    });
   };
 
   const bindPlayAnimationBtn = () => {
     const btn = $('.js-playAnimation');
     btn.on('click.playAnimation', () => {
+      stageWrap.show();
       reset();
       delTimer();
       playAnimation();
     });
   };
 
+  const bindcloseStageBtn = () => {
+    const btn = $('.js-stage-wrapper-close-btn');
+    btn.on('click.closeStage', () => {
+      stageWrap.close();
+    });
+  };
+
   const init = () => {
     bindInput();
     bindPlayAnimationBtn();
+    bindcloseStageBtn();
+
+    const $stageWrap = $('.js-stage-wrapper');
+    stageWrap = new Stage($stageWrap);
+    bindWindow();
   };
 
   init();
