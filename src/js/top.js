@@ -219,12 +219,25 @@ export default function top() {
     }
   };
 
-  const fitting = () => {
+  const fittingStage = () => {
     stageWrap.fitting();
   };
 
   const bindWindow = () => {
-    $(window).on('resize', debounce(fitting, 200));
+    $(window).on('resize', debounce(fittingStage, 200));
+  };
+
+
+  const resizeStageWidth = plus => {
+    const stage = $('.js-stage');
+    let stageWidth;
+    if (plus) {
+      stageWidth = parseInt(stage.attr('width'), 10) + 150;
+    } else {
+      stageWidth = parseInt(stage.attr('width'), 10) - 150;
+    }
+
+    stage.attr('width', stageWidth);
   };
 
   const bindInput = () => {
@@ -235,12 +248,12 @@ export default function top() {
       if (selectTextLength === 0) {
         const keyCode = e.keyCode;
 
-        // resetOpacity();
         delTimer();
 
         if (keyCode !== 8) {
           const chara = svgData[keyCode];
           if (chara !== undefined) {
+            resizeStageWidth(true);
             addStageChara(chara);
           } else {
             e.preventDefault();
@@ -248,6 +261,12 @@ export default function top() {
           }
         } else {
           // Delete
+          const inputText = $('.js-input').val();
+          if (inputText === '') {
+            e.preventDefault();
+            return false;
+          }
+          resizeStageWidth(false);
           deleteStageChara();
         }
       } else {
@@ -270,13 +289,33 @@ export default function top() {
     });
   };
 
+  const resetSvgPosition = () => {
+    const winW = $(window).width();
+    const maxCharaNum = Math.floor(winW / charaWidth);
+    if (maxCharaNum < count) {
+      const newcharaWidth = Math.floor(winW / count);
+      const svgArr = $('.js-stage svg');
+      Object.keys(svgArr).map(key => {
+        if (isFinite(key)) {
+          svgArr[key].setAttribute('x', `${(newcharaWidth) * key}`);
+          svgArr[key].setAttribute('width', `${newcharaWidth}`);
+        }
+      });
+    }
+
+    return;
+  };
+
   const bindPlayAnimationBtn = () => {
     const btn = $('.js-playAnimation');
     btn.on('click.playAnimation', () => {
       stageWrap.show();
       reset();
       delTimer();
-      playAnimation();
+      resetSvgPosition();
+      setTimeout(() => {
+        playAnimation();
+      }, 1000);
     });
   };
 
@@ -287,7 +326,16 @@ export default function top() {
     });
   };
 
+  const fitting = () => {
+    const body = $('.js-wrapper');
+    const winH = $(window).height();
+    const headerH = $('.js-header').height();
+    const footerH = $('.js-footer').height();
+    body.css('height', winH - headerH - footerH);
+  };
+
   const init = () => {
+    fitting();
     bindInput();
     bindPlayAnimationBtn();
     bindcloseStageBtn();

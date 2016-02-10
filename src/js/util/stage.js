@@ -6,7 +6,6 @@ const transition = `opacity ${time}s ease-in-out`;
 export default class Stage {
   constructor(el) {
     this.$el = $(el);
-
     this.init();
   }
 
@@ -19,10 +18,10 @@ export default class Stage {
     this.$el.css('opacity', 0);
     this.$el.css('background-color', stageBgColor);
     this.$el.css('transition', transition);
-    this.$el.css('z-index', '10000');
   }
 
   show() {
+    this.$el.css('z-index', '10000');
     this.$el.css('visibility', 'visible');
     this.$el.css('opacity', '1');
   }
@@ -31,6 +30,7 @@ export default class Stage {
     this.$el.css('opacity', '0');
     setTimeout(() => {
       this.$el.css('visibility', 'hidden');
+      this.$el.css('z-index', '-1');
     }, time * 1000);
   }
 
