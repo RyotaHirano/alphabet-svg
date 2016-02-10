@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Alphabet Svg Line Animation</title>
+    <link rel="stylesheet" href="./assets/css/style.css?v"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fredoka+One"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"/>
+  </head>
+  <body class="u-non-select">
+    <div class="l-header u-color--header js-header">
+      <h1 class="l-header__title u-margin--l js-header-title">Alphabet Svg Line Animation</h1>
+    </div>
+    <div class="l-top js-wrapper">
+      <div class="l-content">
+        <div class="p-top__form c-form">
+          <input type="text" pattern="^[0-9A-Za-z]+$" class="c-input c-input--alphabet js-input"/>
+          <button class="c-btn c-btn--play js-playAnimation">PLAY</button>
+        </div>
+      </div>
+    </div>
+    <div class="c-stage c-stage--animation js-stage-wrapper">
+      <div class="c-stage__btn-close js-stage-wrapper-close-btn"><span class="c-btn-close__line c-btn-close__line--01"></span><span class="c-btn-close__line c-btn-close__line--02"></span></div>
+      <div class="p-top__stage">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="0" class="js-stage"></svg>
+      </div>
+    </div>
+    <div class="l-footer u-color--footer js-footer">
+      <div class="l-footer__inner u-pad--a"><span class="description">Alphabet Svg Line Animation</span></div>
+    </div>
+    <script src="./assets/js/main.js"></script>
+  </body>
+</html>
