@@ -8,6 +8,7 @@ const svgData = require('./data/alphabet-svg.json');
 export default function top() {
   const xmlns = 'http://www.w3.org/2000/svg';
   const charaWidth = 150;
+  const curning = 150;
   let count = 0;
   let pathCount;
   const duration = 1;
@@ -15,6 +16,8 @@ export default function top() {
   let timerArr = [];
   const frame = 30;
   let stageWrap;
+  const keyCodeI = 73;
+  let beforeKeyCode;
 
   window.requestAnimFrame = (function() {
     return (
@@ -136,13 +139,29 @@ export default function top() {
     pathCount++;
   };
 
-  const addStageChara = chara => {
+  const getLetterSpace = keyCode => {
+    let svgLeft;
+    if (keyCode === keyCodeI && beforeKeyCode === keyCodeI) {
+      svgLeft = 120 * count;
+    } else if (keyCode === keyCodeI) {
+      svgLeft = 130 * count;
+    } else if (beforeKeyCode === keyCodeI) {
+      svgLeft = 125 * count;
+    } else {
+      svgLeft = curning * count;
+    }
+    return svgLeft;
+  };
+
+  const addStageChara = (keyCode, chara) => {
     if (Array.isArray(chara)) {
       const stage = $('.js-stage');
       const pathNum = chara.length;
       const svgElem = document.createElementNS(xmlns, 'svg');
       const id = `path-${count}`;
-      const svgLeft = charaWidth * count;
+      const svgLeft = getLetterSpace(keyCode);
+      beforeKeyCode = keyCode;
+
       svgElem.setAttributeNS(null, 'viewBox', `0 0 ${charaWidth} 200`);
       svgElem.setAttributeNS(null, 'width', `${charaWidth}px`);
       svgElem.setAttributeNS(null, 'height', '200px');
@@ -254,7 +273,7 @@ export default function top() {
           const chara = svgData[keyCode];
           if (chara !== undefined) {
             resizeStageWidth(true);
-            addStageChara(chara);
+            addStageChara(keyCode, chara);
           } else {
             e.preventDefault();
             return false;
