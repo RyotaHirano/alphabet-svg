@@ -620,38 +620,60 @@ a {
 .c-form {
   display: inline-flex; }
 
-.c-btn--play {
+.c-btn {
   padding: 5px 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  padding: 0.8rem 3rem;
-  font-size: 2.4rem;
+  font-size: 3rem;
   line-height: 1.4rem;
-  font-family: "Fredoka One", cursive; }
-  .c-btn--play:hover {
+  font-family: "Fredoka One", cursive;
+  position: relative;
+  overflow: hidden; }
+  .c-btn:hover {
     opacity: 0.9; }
-
-.c-btn-close__line {
-  width: 28px;
-  height: 6px;
-  border-radius: 20px;
-  background: #000;
-  display: inline-block;
-  position: absolute;
-  top: 22px;
-  left: 11px; }
-  .c-btn-close__line--01 {
-    transform: rotate(45deg); }
-  .c-btn-close__line--02 {
-    transform: rotate(-45deg); }
+  .c-btn--play {
+    padding: 0.8rem 3rem; }
+    .c-btn--play:after {
+      content: "";
+      width: 140px;
+      height: 8px;
+      display: block;
+      position: absolute;
+      transform: translate(-2px, 64px);
+      left: 50%;
+      margin-left: -70px;
+      border-radius: 10px;
+      background-color: #000;
+      transition: transform .2s ease-in-out; }
+  .c-btn--replay {
+    width: 320px;
+    padding: 2rem 4rem;
+    margin: 2rem auto; }
+  .c-btn.play--enable:hover {
+    opacity: 1; }
+  .c-btn.play--enable:after {
+    transform: translate(-2px, -15px); }
+  .c-btn-close__line {
+    width: 28px;
+    height: 6px;
+    border-radius: 20px;
+    background: #000;
+    display: inline-block;
+    position: absolute;
+    top: 22px;
+    left: 11px; }
+    .c-btn-close__line--01 {
+      transform: rotate(45deg); }
+    .c-btn-close__line--02 {
+      transform: rotate(-45deg); }
 
 .c-input {
   outline: none;
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 4px solid #1abc9c;
+  border-bottom: 10px solid #1abc9c;
   transition: all 0.4s ease-in-out; }
   .c-input--alphabet {
     width: 70%;
@@ -660,12 +682,12 @@ a {
     margin-right: 0.4em;
     display: inline-block;
     border-radius: 5px;
-    font-size: 4.2rem;
+    font-size: 6.2rem;
     font-family: "Fredoka One", cursive;
     letter-spacing: 0.05em;
     vertical-align: baseline; }
   .c-input:focus {
-    border-bottom: 4px solid #FFC857; }
+    border-bottom: 10px solid #FFC857; }
   .c-input::-ms-clear {
     visibility: hidden; }
 
@@ -711,6 +733,12 @@ a {
   display: flex;
   flex-direction: row;
   justify-content: center; }
+
+.p-top__replay {
+  position: absolute;
+  left: 50%;
+  margin-left: -160px;
+  bottom: 0; }
 
 .u-color--header {
   background-color: #ffffff; }
