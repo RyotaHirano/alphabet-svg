@@ -1,127 +1,56 @@
 import $ from 'jquery';
 import debounce from 'lodash.debounce';
+
+import DrawSvg from './util/DrawSvg';
 import Stage from './util/stage';
 import changeBgColor from './util/changeBgColor';
 import resetBgColor from './util/resetBgColor';
+import chkKeyCode from './util/chkKeyCode';
+import resizeStageWidth from './util/resizeStageWidth';
+import fittingWinHeight from './util/fittingWinHeight';
+import getLetterSpace from './util/getLetterSpace';
+
 const svgData = require('./data/alphabet-svg.json');
+const playEnableClass = 'play--enable';
+
+const xmlns = 'http://www.w3.org/2000/svg';
+const charaWidth = 150;
+const frame = 25;
+let beforeChara;
+let svgLeft = 0;
+let count = 0;
+let pathCount;
+let pathArr = [];
+let timerArr = [];
+let stageWrap;
+
+window.requestAnimFrame = (function() {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      window.setTimeout(callback, 1000 / frame);
+    }
+  );
+})();
+
+window.cancelAnimFrame = (function() {
+  return (
+    window.cancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    function(id) {
+      window.clearTimeout(id);
+    }
+  );
+})();
 
 export default function top() {
-  const xmlns = 'http://www.w3.org/2000/svg';
-  const charaWidth = 150;
-  const curning = 150;
-  let svgLeft = 0;
-  let count = 0;
-  let pathCount;
-  const duration = 0.8;
-  let pathArr = [];
-  let timerArr = [];
-  const frame = 25;
-  let stageWrap;
-  const charaI = 'I';
-  let beforeChara;
-  const playEnableClass = 'play--enable';
-
-  window.requestAnimFrame = (function() {
-    return (
-      window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.oRequestAnimationFrame ||
-      window.msRequestAnimationFrame ||
-      function(callback) {
-        window.setTimeout(callback, 1000 / frame);
-      }
-    );
-  })();
-
-  window.cancelAnimFrame = (function() {
-    return (
-      window.cancelAnimationFrame ||
-      window.webkitCancelAnimationFrame ||
-      window.mozCancelAnimationFrame ||
-      window.oCancelAnimationFrame ||
-      window.msCancelAnimationFrame ||
-      function(id) {
-        window.clearTimeout(id);
-      }
-    );
-  })();
-
-  const lineLength = (x1, y1, x2, y2) => {
-    const length = Math.sqrt((x2 -= x1) * x2 + (y2 -= y1) * y2);
-    return length;
-  };
-
-  const getTotalLineLength = elem => {
-    const x1 = elem.getAttributeNS(null, 'x1');
-    const y1 = elem.getAttributeNS(null, 'y1');
-    const x2 = elem.getAttributeNS(null, 'x2');
-    const y2 = elem.getAttributeNS(null, 'y2');
-
-    return lineLength(x1, y1, x2, y2);
-  };
-
-  class DrawSvg {
-    constructor(type, el) {
-      this.el = el;
-      this.type = el.tagName;
-      this.currentFrame = 0;
-
-      this.handle = 0;
-
-      if (this.type === 'path') {
-        this.elLength = el.getTotalLength();
-      } else if (this.type === 'line') {
-        this.elLength = getTotalLineLength(this.el);
-      }
-
-      // draw speed
-      if (this.elLength <= 100) {
-        this.totalFrame = 10;
-        this.duration = duration;
-      } else {
-        this.totalFrame = frame;
-        this.duration = duration;
-      }
-
-      this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
-      this.el.style.strokeDashoffset = this.elLength;
-    }
-
-    draw() {
-      this.el.style.opacity = 1; // stroke-linecapを使うとlinecapの部分が最初から表示されてしまうので、ここで表示させる
-      this.playAnimation();
-    }
-
-    resetAnimation() {
-      this.el.style.strokeDashoffset = this.elLength;
-      this.currentFrame = 0;
-    }
-
-    // playAnimation() {
-    //   this.el.style.transition = this.el.style.WebkitTransition = 'none';
-    //   this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
-    //   this.el.style.strokeDashoffset = this.elLength;
-    //   this.el.getBoundingClientRect();
-    //   this.el.style.transition = this.el.style.WebkitTransition = `stroke-dashoffset ${duration}s ease-in-out`;
-    //   this.el.style.strokeDashoffset = '0';
-    // }
-
-    playAnimation() {
-      const _this = this;
-      const progress = this.currentFrame / this.totalFrame;
-      if (progress > 1) {
-        window.cancelAnimFrame(this.handle);
-      } else {
-        this.currentFrame++;
-        this.el.style.strokeDashoffset = Math.floor(this.elLength * (1 - progress));
-        this.handle = window.requestAnimFrame(function() {
-          _this.playAnimation();
-        });
-      }
-    }
-  }
-
   const createPath = (data, parent, color) => {
     let pathElem;
     const type = data.type;
@@ -152,24 +81,6 @@ export default function top() {
     pathCount++;
   };
 
-  const getLetterSpace = keyCode => {
-    let _svgLeft = svgLeft;
-    let addjustCurning = 0;
-    if (keyCode === charaI && beforeChara === charaI) {
-      addjustCurning = curning - 70;
-      _svgLeft += addjustCurning;
-    } else if (keyCode === charaI) {
-      addjustCurning = curning - 20;
-      _svgLeft += addjustCurning;
-    } else if (beforeChara === charaI) {
-      addjustCurning = curning - 25;
-      _svgLeft += addjustCurning;
-    } else {
-      _svgLeft += curning;
-    }
-    return _svgLeft;
-  };
-
   const getRandomColor = () => {
     const hue = Math.floor(360 * Math.random());
     return `hsl(${hue}, 35%, 60%)`;
@@ -183,7 +94,7 @@ export default function top() {
       const id = `path-${count}`;
 
       if (count !== 0) {
-        svgLeft = getLetterSpace(chara);
+        svgLeft = getLetterSpace(chara, beforeChara, svgLeft);
       }
       beforeChara = chara;
 
@@ -230,7 +141,7 @@ export default function top() {
     deleteStageChara();
   };
 
-  const reset = () => {
+  const resetStyle = () => {
     const pathAll = document.querySelectorAll('path');
     const lineAll = document.querySelectorAll('line');
     const lineCount = lineAll.length;
@@ -269,29 +180,6 @@ export default function top() {
 
   const bindWindow = () => {
     $(window).on('resize', debounce(fittingStage, 200));
-  };
-
-  const resizeStageWidth = plus => {
-    const stage = $('.js-stage');
-    let stageWidth;
-    if (plus) {
-      stageWidth = parseInt(stage.attr('width'), 10) + 150;
-    } else {
-      stageWidth = parseInt(stage.attr('width'), 10) - 150;
-    }
-
-    stage.attr('width', stageWidth);
-  };
-
-  const chkKeyCode = keyCode => {
-    if (keyCode >= 48 && keyCode <= 57) { // 0~9
-      return true;
-    } else if (keyCode >= 65 && keyCode <= 90) { // AtoZ
-      return true;
-    } else if (keyCode === 37 || keyCode === 39) { // ← or →
-      return true;
-    }
-    return false;
   };
 
   const bindInput = () => {
@@ -376,7 +264,7 @@ export default function top() {
         stageWrap.show();
         resetData();
         getInputText(inputText);
-        reset();
+        resetStyle();
         delTimer();
         resetSvgPosition();
         setTimeout(() => {
@@ -392,7 +280,7 @@ export default function top() {
       resetData();
       const inputText = $('.js-input').val().toUpperCase();
       getInputText(inputText);
-      reset();
+      resetStyle();
       delTimer();
       resetSvgPosition();
       playAnimation();
@@ -406,25 +294,20 @@ export default function top() {
     });
   };
 
-  const fitting = () => {
-    const body = $('.js-wrapper');
-    const winH = $(window).height();
-    const headerH = $('.js-header').height();
-    const footerH = $('.js-footer').height();
-    body.css('height', winH - headerH - footerH);
+  const createStage = () => {
+    const $stageWrap = $('.js-stage-wrapper');
+    stageWrap = new Stage($stageWrap);
   };
 
   const init = () => {
-    fitting();
+    fittingWinHeight();
     bindInput();
     bindPlayAnimationBtn();
     bindReplayBtn();
     bindcloseStageBtn();
 
-    const $stageWrap = $('.js-stage-wrapper');
-    stageWrap = new Stage($stageWrap);
+    createStage();
     bindWindow();
   };
-
   init();
 }
