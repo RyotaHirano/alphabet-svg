@@ -1,13 +1,13 @@
-import Router from './lib/router';
+import pathDispatcher from 'path-dispatcher';
 
 import commonAction from './common';
 import topAction from './top';
 
-const router = new Router({
+const dispatcher = pathDispatcher({
   '*': commonAction,
   '/': topAction
 }, {
   rootPath: '/alphabet-svg'
 });
 
-router.run();
+dispatcher.dispatch();
