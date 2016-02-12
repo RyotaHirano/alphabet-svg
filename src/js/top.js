@@ -12,10 +12,10 @@ export default function top() {
   let svgLeft = 0;
   let count = 0;
   let pathCount;
-  const duration = 1;
+  const duration = 0.8;
   let pathArr = [];
   let timerArr = [];
-  const frame = 30;
+  const frame = 25;
   let stageWrap;
   const charaI = 'I';
   let beforeChara;
@@ -66,13 +66,22 @@ export default function top() {
       this.el = el;
       this.type = el.tagName;
       this.currentFrame = 0;
-      this.totalFrame = frame;
+
       this.handle = 0;
 
       if (this.type === 'path') {
         this.elLength = el.getTotalLength();
       } else if (this.type === 'line') {
         this.elLength = getTotalLineLength(this.el);
+      }
+
+      // draw speed
+      if (this.elLength <= 100) {
+        this.totalFrame = 10;
+        this.duration = duration;
+      } else {
+        this.totalFrame = frame;
+        this.duration = duration;
       }
 
       this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
@@ -113,7 +122,7 @@ export default function top() {
     }
   }
 
-  const createPath = (data, parent) => {
+  const createPath = (data, parent, color) => {
     let pathElem;
     const type = data.type;
     if (type === 'path') {
@@ -122,6 +131,7 @@ export default function top() {
       pathElem.setAttributeNS(null, 'height', '200px');
       pathElem.setAttributeNS(null, 'd', data.d);
       pathElem.setAttributeNS(null, 'class', 'c-path');
+      pathElem.setAttributeNS(null, 'stroke', color);
     } else if (type === 'line') {
       pathElem = document.createElementNS(xmlns, 'line');
       pathElem.setAttributeNS(null, 'width', `${charaWidth}px`);
@@ -131,6 +141,7 @@ export default function top() {
       pathElem.setAttributeNS(null, 'x2', data.x2);
       pathElem.setAttributeNS(null, 'y2', data.y2);
       pathElem.setAttributeNS(null, 'class', 'c-line');
+      pathElem.setAttributeNS(null, 'stroke', color);
     }
     pathElem.style.display = 'block';
 
@@ -159,6 +170,11 @@ export default function top() {
     return _svgLeft;
   };
 
+  const getrandomColor = () => {
+    const hue = Math.floor(360 * Math.random());
+    return `hsl(${hue}, 35%, 60%)`;
+  };
+
   const addStageChara = (chara, charaData) => {
     if (Array.isArray(charaData)) {
       const stage = $('.js-stage');
@@ -180,9 +196,10 @@ export default function top() {
       svgElem.style.display = 'block';
 
       stage.append(svgElem);
+      const color = getrandomColor();
 
       charaData.slice().map(item => {
-        createPath(item, svgElem);
+        createPath(item, svgElem, color);
       });
       count++;
     }
@@ -197,7 +214,7 @@ export default function top() {
       pathArr.forEach((item, i) => {
         const timer = setTimeout(() => {
           item.draw();
-        }, i * duration * 1000);
+        }, i * item.duration * 1000);
         timerArr.push(timer);
       });
     }

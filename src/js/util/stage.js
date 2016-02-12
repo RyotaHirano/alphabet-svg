@@ -1,5 +1,5 @@
 import $ from 'jquery';
-const stageBgColor = '#333333';
+const stageBgColor = '#1e1e1e';
 const time = 0.4;
 const transition = `opacity ${time}s ease-in-out`;
 
