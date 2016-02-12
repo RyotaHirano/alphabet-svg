@@ -170,7 +170,7 @@ export default function top() {
     return _svgLeft;
   };
 
-  const getrandomColor = () => {
+  const getRandomColor = () => {
     const hue = Math.floor(360 * Math.random());
     return `hsl(${hue}, 35%, 60%)`;
   };
@@ -196,7 +196,7 @@ export default function top() {
       svgElem.style.display = 'block';
 
       stage.append(svgElem);
-      const color = getrandomColor();
+      const color = getRandomColor();
 
       charaData.slice().map(item => {
         createPath(item, svgElem, color);
