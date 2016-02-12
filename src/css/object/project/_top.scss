@@ -1,6 +1,7 @@
 .p-top {
   &__form {
-    display: flex;
+    position: relative;
+    top: -60px;
     flex-direction: row;
     justify-content: center;
   }

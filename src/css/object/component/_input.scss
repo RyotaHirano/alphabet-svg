@@ -11,9 +11,11 @@
   &--alphabet {
     width: 70%;
     min-width: 500px;
+    height: 150px;
     padding: 0.6rem 1.4rem;
     margin-right: 0.4em;
     display: inline-block;
+    box-sizing: border-box;
     border-radius: 5px;
     font-size: 6.2rem;
     font-family: $font-family;

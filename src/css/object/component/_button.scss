@@ -17,6 +17,7 @@
   position: relative;
   overflow: hidden;
   &--play {
+    height: 150px;
     padding: 0.8rem 3rem;
     &:after {
       content: "";
