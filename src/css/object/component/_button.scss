@@ -10,12 +10,41 @@
   }
 }
 .c-btn {
+  @include c-btn;
+  font-size: 3rem;
+  line-height: 1.4rem;
+  font-family: $font-family;
+  position: relative;
+  overflow: hidden;
   &--play {
-    @include c-btn;
     padding: 0.8rem 3rem;
-    font-size: 2.4rem;
-    line-height: 1.4rem;
-    font-family: $font-family;
+    &:after {
+      content: "";
+      width: 140px;
+      height: 8px;
+      display: block;
+      position: absolute;
+      transform: translate(-2px, 64px);
+      left: 50%;
+      margin-left: -70px;
+      border-radius: 10px;
+      background-color: #000;
+      transition: transform .2s ease-in-out;
+    }
+  }
+  &--replay {
+    width: 320px;
+    padding: 2rem 4rem;
+    margin: 2rem auto;
+  }
+
+  &.play--enable {
+    &:hover {
+      opacity: 1;
+    }
+    &:after {
+      transform: translate(-2px, -15px);
+    }
   }
 
   &-close {

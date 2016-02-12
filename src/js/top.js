@@ -13,12 +13,13 @@ export default function top() {
   let count = 0;
   let pathCount;
   const duration = 1;
-  const pathArr = [];
+  let pathArr = [];
   let timerArr = [];
   const frame = 30;
   let stageWrap;
-  const keyCodeI = 73;
+  const keyCodeI = 'I';
   let beforeKeyCode;
+  const playEnableClass = 'play--enable';
 
   window.requestAnimFrame = (function() {
     return (
@@ -158,17 +159,17 @@ export default function top() {
     return _svgLeft;
   };
 
-  const addStageChara = (keyCode, chara) => {
-    if (Array.isArray(chara)) {
+  const addStageChara = (chara, charaData) => {
+    if (Array.isArray(charaData)) {
       const stage = $('.js-stage');
-      const pathNum = chara.length;
+      const pathNum = charaData.length;
       const svgElem = document.createElementNS(xmlns, 'svg');
       const id = `path-${count}`;
 
       if (count !== 0) {
-        svgLeft = getLetterSpace(keyCode);
+        svgLeft = getLetterSpace(chara);
       }
-      beforeKeyCode = keyCode;
+      beforeKeyCode = chara;
 
       svgElem.setAttributeNS(null, 'viewBox', `0 0 ${charaWidth} 200`);
       svgElem.setAttributeNS(null, 'width', `${charaWidth}px`);
@@ -180,7 +181,7 @@ export default function top() {
 
       stage.append(svgElem);
 
-      chara.slice().map(item => {
+      charaData.slice().map(item => {
         createPath(item, svgElem);
       });
       count++;
@@ -188,18 +189,7 @@ export default function top() {
   };
 
   const deleteStageChara = () => {
-    const targetNum = count - 1;
-    const targetId = `#path-${targetNum}`;
-    const target = $(targetId);
-    if (target[0]) {
-      const targetPathNum = target[0].attributes.pathNum.value;
-      for (let i = 0; i < targetPathNum; i++) {
-        pathArr.pop();
-        pathCount--;
-      }
-      target.remove();
-      count--;
-    }
+    $('.js-stage').empty();
   };
 
   const playAnimation = () => {
@@ -211,6 +201,17 @@ export default function top() {
         timerArr.push(timer);
       });
     }
+  };
+
+  const resetData = () => {
+    svgLeft = 0;
+    count = 0;
+    pathCount = 0;
+    pathArr = [];
+    timerArr = [];
+    beforeKeyCode = '';
+    $('.js-stage')[0].setAttribute('width', `0`);
+    deleteStageChara();
   };
 
   const reset = () => {
@@ -254,7 +255,6 @@ export default function top() {
     $(window).on('resize', debounce(fittingStage, 200));
   };
 
-
   const resizeStageWidth = plus => {
     const stage = $('.js-stage');
     let stageWidth;
@@ -267,38 +267,48 @@ export default function top() {
     stage.attr('width', stageWidth);
   };
 
+  const chkKeyCode = keyCode => {
+    if (keyCode >= 48 && keyCode <= 57) { // 0~9
+      return true;
+    } else if (keyCode >= 65 && keyCode <= 90) { // AtoZ
+      return true;
+    } else if (keyCode === 37 || keyCode === 39) { // ← or →
+      return true;
+    }
+    return false;
+  };
+
   const bindInput = () => {
     const input = $('.js-input');
 
     input.on('keydown.input', e => {
-      const selectTextLength = window.getSelection().toString().length;
-      if (selectTextLength === 0) {
-        const keyCode = e.keyCode;
+      const keyCode = e.keyCode;
 
-        delTimer();
-
-        if (keyCode !== 8) {
-          const chara = svgData[keyCode];
-          if (chara !== undefined) {
-            resizeStageWidth(true);
-            addStageChara(keyCode, chara);
-          } else {
-            e.preventDefault();
-            return false;
-          }
-        } else {
-          // Delete
-          const inputText = $('.js-input').val();
-          if (inputText === '') {
-            e.preventDefault();
-            return false;
-          }
-          resizeStageWidth(false);
-          deleteStageChara();
-        }
-      } else {
+      // Shift Key or Alt Key
+      if (e.shiftKey || e.altKey) {
         e.preventDefault();
         return false;
+      }
+
+      delTimer();
+
+      if (keyCode !== 8) { // Not Delete
+        if (chkKeyCode(keyCode)) {
+          $('.js-playAnimation').removeClass(playEnableClass);
+        } else {
+          e.preventDefault();
+          return false;
+        }
+      }
+    });
+
+    input.on('keyup.input', e => {
+      const keyCode = e.keyCode;
+      if (keyCode === 8) { // Delete
+        const inputText = $('.js-input').val();
+        if (inputText === '') {
+          $('.js-playAnimation').addClass(playEnableClass);
+        }
       }
     });
 
@@ -333,16 +343,30 @@ export default function top() {
     return;
   };
 
+  const getInputText = inputText => {
+    const inputArr = inputText.split('');
+    inputArr.slice().forEach(item => {
+      const chara = svgData[item];
+      resizeStageWidth(true);
+      addStageChara(item, chara);
+    });
+  };
+
   const bindPlayAnimationBtn = () => {
     const btn = $('.js-playAnimation');
     btn.on('click.playAnimation', () => {
-      stageWrap.show();
-      reset();
-      delTimer();
-      resetSvgPosition();
-      setTimeout(() => {
-        playAnimation();
-      }, 1000);
+      const inputText = $('.js-input').val().toUpperCase();
+      if (inputText !== '') {
+        stageWrap.show();
+        resetData();
+        getInputText(inputText);
+        reset();
+        delTimer();
+        resetSvgPosition();
+        setTimeout(() => {
+          playAnimation();
+        }, 1000);
+      }
     });
   };
 

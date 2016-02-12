@@ -15,4 +15,11 @@
     flex-direction: row;
     justify-content: center;
   }
+
+  &__replay {
+    position: absolute;
+    left: 50%;
+    margin-left: -160px;
+    bottom: 0;
+  }
 }

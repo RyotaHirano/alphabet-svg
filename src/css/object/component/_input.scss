@@ -5,7 +5,7 @@
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 4px solid #1abc9c;
+  border-bottom: 10px solid #1abc9c;
   transition: all 0.4s ease-in-out;
 
   &--alphabet {
@@ -15,14 +15,14 @@
     margin-right: 0.4em;
     display: inline-block;
     border-radius: 5px;
-    font-size: 4.2rem;
+    font-size: 6.2rem;
     font-family: $font-family;
     letter-spacing: 0.05em;
     vertical-align: baseline;
   }
 
   &:focus {
-    border-bottom: 4px solid #FFC857;
+    border-bottom: 10px solid #FFC857;
   }
   &::-ms-clear {
     visibility: hidden;
