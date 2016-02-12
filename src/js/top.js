@@ -9,6 +9,7 @@ export default function top() {
   const xmlns = 'http://www.w3.org/2000/svg';
   const charaWidth = 150;
   const curning = 150;
+  let svgLeft = 0;
   let count = 0;
   let pathCount;
   const duration = 1;
@@ -140,17 +141,21 @@ export default function top() {
   };
 
   const getLetterSpace = keyCode => {
-    let svgLeft;
+    let _svgLeft = svgLeft;
+    let addjustCurning = 0;
     if (keyCode === keyCodeI && beforeKeyCode === keyCodeI) {
-      svgLeft = 120 * count;
+      addjustCurning = curning - 70;
+      _svgLeft += addjustCurning;
     } else if (keyCode === keyCodeI) {
-      svgLeft = 130 * count;
+      addjustCurning = curning - 20;
+      _svgLeft += addjustCurning;
     } else if (beforeKeyCode === keyCodeI) {
-      svgLeft = 125 * count;
+      addjustCurning = curning - 25;
+      _svgLeft += addjustCurning;
     } else {
-      svgLeft = curning * count;
+      _svgLeft += curning;
     }
-    return svgLeft;
+    return _svgLeft;
   };
 
   const addStageChara = (keyCode, chara) => {
@@ -159,7 +164,10 @@ export default function top() {
       const pathNum = chara.length;
       const svgElem = document.createElementNS(xmlns, 'svg');
       const id = `path-${count}`;
-      const svgLeft = getLetterSpace(keyCode);
+
+      if (count !== 0) {
+        svgLeft = getLetterSpace(keyCode);
+      }
       beforeKeyCode = keyCode;
 
       svgElem.setAttributeNS(null, 'viewBox', `0 0 ${charaWidth} 200`);
