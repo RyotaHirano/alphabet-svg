@@ -585,8 +585,11 @@ a {
 .l-content {
   width: 100%;
   min-width: 960px;
-  height: auto;
-  margin: 0 auto; }
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
 
 .l-top {
   transition: background-color 0.5s cubic-bezier(0.65, 0.05, 0.36, 1); }
@@ -633,6 +636,7 @@ a {
   .c-btn:hover {
     opacity: 0.9; }
   .c-btn--play {
+    height: 150px;
     padding: 0.8rem 3rem; }
     .c-btn--play:after {
       content: "";
@@ -678,9 +682,11 @@ a {
   .c-input--alphabet {
     width: 70%;
     min-width: 500px;
+    height: 150px;
     padding: 0.6rem 1.4rem;
     margin-right: 0.4em;
     display: inline-block;
+    box-sizing: border-box;
     border-radius: 5px;
     font-size: 6.2rem;
     font-family: "Fredoka One", cursive;
@@ -713,14 +719,14 @@ a {
 .c-path,
 .c-line {
   fill: none;
-  stroke: #ddd;
   stroke-width: 30px;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0; }
 
 .p-top__form {
-  display: flex;
+  position: relative;
+  top: -60px;
   flex-direction: row;
   justify-content: center; }
 
