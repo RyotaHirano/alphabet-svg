@@ -17,8 +17,8 @@ export default function top() {
   let timerArr = [];
   const frame = 30;
   let stageWrap;
-  const keyCodeI = 'I';
-  let beforeKeyCode;
+  const charaI = 'I';
+  let beforeChara;
   const playEnableClass = 'play--enable';
 
   window.requestAnimFrame = (function() {
@@ -144,13 +144,13 @@ export default function top() {
   const getLetterSpace = keyCode => {
     let _svgLeft = svgLeft;
     let addjustCurning = 0;
-    if (keyCode === keyCodeI && beforeKeyCode === keyCodeI) {
+    if (keyCode === charaI && beforeChara === charaI) {
       addjustCurning = curning - 70;
       _svgLeft += addjustCurning;
-    } else if (keyCode === keyCodeI) {
+    } else if (keyCode === charaI) {
       addjustCurning = curning - 20;
       _svgLeft += addjustCurning;
-    } else if (beforeKeyCode === keyCodeI) {
+    } else if (beforeChara === charaI) {
       addjustCurning = curning - 25;
       _svgLeft += addjustCurning;
     } else {
@@ -169,7 +169,7 @@ export default function top() {
       if (count !== 0) {
         svgLeft = getLetterSpace(chara);
       }
-      beforeKeyCode = chara;
+      beforeChara = chara;
 
       svgElem.setAttributeNS(null, 'viewBox', `0 0 ${charaWidth} 200`);
       svgElem.setAttributeNS(null, 'width', `${charaWidth}px`);
@@ -208,8 +208,7 @@ export default function top() {
     count = 0;
     pathCount = 0;
     pathArr = [];
-    timerArr = [];
-    beforeKeyCode = '';
+    beforeChara = '';
     $('.js-stage')[0].setAttribute('width', `0`);
     deleteStageChara();
   };
@@ -370,6 +369,19 @@ export default function top() {
     });
   };
 
+  const bindReplayBtn = () => {
+    const btn = $('.js-replayAnimation');
+    btn.on('click.replayAnimation', () => {
+      resetData();
+      const inputText = $('.js-input').val().toUpperCase();
+      getInputText(inputText);
+      reset();
+      delTimer();
+      resetSvgPosition();
+      playAnimation();
+    });
+  };
+
   const bindcloseStageBtn = () => {
     const btn = $('.js-stage-wrapper-close-btn');
     btn.on('click.closeStage', () => {
@@ -389,6 +401,7 @@ export default function top() {
     fitting();
     bindInput();
     bindPlayAnimationBtn();
+    bindReplayBtn();
     bindcloseStageBtn();
 
     const $stageWrap = $('.js-stage-wrapper');
