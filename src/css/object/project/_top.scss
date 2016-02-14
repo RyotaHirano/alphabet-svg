@@ -4,6 +4,11 @@
     top: -60px;
     flex-direction: row;
     justify-content: center;
+
+    @media (max-width: 959px) {
+      margin: 0 20px;
+      flex-direction: column;
+    }
   }
 
   &__stage,

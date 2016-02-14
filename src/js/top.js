@@ -312,10 +312,10 @@ export default function top() {
     resetSvgPosition('.js-loading-stage');
     setTimeout(() => {
       playAnimation();
+      setTimeout(() => {
+        loading.close();
+      }, 2000);
     }, 800);
-    setTimeout(() => {
-      loading.close();
-    }, 3000);
   };
 
   const init = () => {

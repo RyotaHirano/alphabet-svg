@@ -10,7 +10,6 @@
 
   &--alphabet {
     width: 70%;
-    min-width: 500px;
     height: 150px;
     padding: 0.6rem 1.4rem;
     margin-right: 0.4em;
@@ -21,10 +20,16 @@
     font-family: $font-family;
     letter-spacing: 0.05em;
     vertical-align: baseline;
+
+    @media (max-width: 959px) {
+      width: 100%;
+      margin: 0 0 20px;
+      display: block;
+    }
   }
 
   &:focus {
-    border-bottom: 10px solid #FFC857;
+    border-bottom: 10px solid #FFBE39;
   }
   &::-ms-clear {
     visibility: hidden;
