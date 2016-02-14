@@ -8,6 +8,6 @@
   left: 0;
   background-color: #1e1e1e;
   opacity: 1;
-  transition: opacity .4s ease-in-out;
+  transition: $loading-transition;
   z-index: 10001;
 }
