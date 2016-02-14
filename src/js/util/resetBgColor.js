@@ -5,7 +5,7 @@ const textColor = '#000000';
 export default function resetBgColor() {
   const header = $('.js-header');
   const headerTitLe = $('.js-header-title');
-  const body = $('.js-wrapper');
+  const body = $('body');
 
   header.css('background-color', bgColor);
   headerTitLe.css('color', textColor);

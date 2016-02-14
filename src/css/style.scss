@@ -40,6 +40,9 @@
 // Footer
 @import "layout/_footer";
 
+// Loading
+@import "layout/_loading";
+
 // ==========================================================================
 // Object
 // ==========================================================================
@@ -75,6 +78,9 @@
 
   // TextAlign
   @import "object/utility/_textalign";
+
+  // Transition
+  @import "object/utility/_transition";
 
 // ==========================================================================
 // Vendor

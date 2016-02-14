@@ -1,7 +1,4 @@
-import $ from 'jquery';
-
-export default function resizeStageWidth(plus) {
-  const stage = $('.js-stage');
+export default function resizeStageWidth(stage, plus) {
   let stageWidth;
   if (plus) {
     stageWidth = parseInt(stage.attr('width'), 10) + 150;

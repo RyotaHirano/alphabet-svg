@@ -1,0 +1,10 @@
+// Transition
+//------------------------------------------------------
+.u-transition {
+  &--bg {
+    transition: $bg-transition;
+  }
+  &--text {
+    transition: $text-transition;
+  }
+}

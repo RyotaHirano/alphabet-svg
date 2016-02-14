@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import debounce from 'lodash.debounce';
 
+import Loading from './util/loading';
 import DrawSvg from './util/DrawSvg';
 import Stage from './util/stage';
 import changeBgColor from './util/changeBgColor';
@@ -12,6 +13,7 @@ import getLetterSpace from './util/getLetterSpace';
 
 const svgData = require('./data/alphabet-svg.json');
 const playEnableClass = 'play--enable';
+const loadingText = 'ALPHABETSVG';
 
 const xmlns = 'http://www.w3.org/2000/svg';
 const charaWidth = 150;
@@ -51,7 +53,7 @@ window.cancelAnimFrame = (function() {
 })();
 
 export default function top() {
-  const createPath = (data, parent, color) => {
+  const createPath = (data, parent, color, inOrder) => {
     let pathElem;
     const type = data.type;
     if (type === 'path') {
@@ -74,7 +76,7 @@ export default function top() {
     }
     pathElem.style.display = 'block';
 
-    const rawElem = new DrawSvg(type, pathElem);
+    const rawElem = new DrawSvg(type, pathElem, inOrder);
     pathArr.push(rawElem);
 
     parent.appendChild(pathElem);
@@ -86,9 +88,8 @@ export default function top() {
     return `hsl(${hue}, 35%, 60%)`;
   };
 
-  const addStageChara = (chara, charaData) => {
+  const addStageChara = (stage, chara, charaData, inOrder) => {
     if (Array.isArray(charaData)) {
-      const stage = $('.js-stage');
       const pathNum = charaData.length;
       const svgElem = document.createElementNS(xmlns, 'svg');
       const id = `path-${count}`;
@@ -110,7 +111,7 @@ export default function top() {
       const color = getRandomColor();
 
       charaData.slice().map(item => {
-        createPath(item, svgElem, color);
+        createPath(item, svgElem, color, inOrder);
       });
       count++;
     }
@@ -230,12 +231,12 @@ export default function top() {
     });
   };
 
-  const resetSvgPosition = () => {
+  const resetSvgPosition = stage => {
     const winW = $(window).width();
     const maxCharaNum = Math.floor(winW / charaWidth);
     if (maxCharaNum < count) {
       const newcharaWidth = Math.floor(winW / count);
-      const svgArr = $('.js-stage svg');
+      const svgArr = $(`${stage} svg`);
       Object.keys(svgArr).map(key => {
         if (isFinite(key)) {
           svgArr[key].setAttribute('x', `${(newcharaWidth) * key}`);
@@ -247,12 +248,12 @@ export default function top() {
     return;
   };
 
-  const getInputText = inputText => {
+  const getInputText = (stage, inputText, inOrder) => {
     const inputArr = inputText.split('');
     inputArr.slice().forEach(item => {
       const chara = svgData[item];
-      resizeStageWidth(true);
-      addStageChara(item, chara);
+      resizeStageWidth(stage, true);
+      addStageChara(stage, item, chara, inOrder);
     });
   };
 
@@ -261,12 +262,13 @@ export default function top() {
     btn.on('click.playAnimation', () => {
       const inputText = $('.js-input').val().toUpperCase();
       if (inputText !== '') {
+        const stage = $('.js-stage');
         stageWrap.show();
         resetData();
-        getInputText(inputText);
+        getInputText(stage, inputText, true);
         resetStyle();
         delTimer();
-        resetSvgPosition();
+        resetSvgPosition('.js-stage');
         setTimeout(() => {
           playAnimation();
         }, 1000);
@@ -279,10 +281,11 @@ export default function top() {
     btn.on('click.replayAnimation', () => {
       resetData();
       const inputText = $('.js-input').val().toUpperCase();
-      getInputText(inputText);
+      const stage = $('.js-stage');
+      getInputText(stage, inputText, true);
       resetStyle();
       delTimer();
-      resetSvgPosition();
+      resetSvgPosition('.js-stage');
       playAnimation();
     });
   };
@@ -299,7 +302,24 @@ export default function top() {
     stageWrap = new Stage($stageWrap);
   };
 
+  const loadingInit = () => {
+    const elLoading = $('.js-loading');
+    const loadingStage = $('.js-loading-stage');
+    const loading = new Loading(elLoading);
+    loading.init();
+
+    getInputText(loadingStage, loadingText, false);
+    resetSvgPosition('.js-loading-stage');
+    setTimeout(() => {
+      playAnimation();
+    }, 800);
+    setTimeout(() => {
+      loading.close();
+    }, 3000);
+  };
+
   const init = () => {
+    loadingInit();
     fittingWinHeight();
     bindInput();
     bindPlayAnimationBtn();

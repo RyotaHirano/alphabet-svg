@@ -5,12 +5,10 @@
   height: 60px;
   margin: 0 auto;
   overflow: hidden;
-  transition: $bg-transition;
 
   &__title {
     width: auto;
     line-height: 60px;
     font-family: $font-family;
-    transition: $text-transition;
   }
 }

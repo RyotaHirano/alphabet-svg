@@ -6,7 +6,8 @@
     justify-content: center;
   }
 
-  &__stage {
+  &__stage,
+  &__loading {
     width: 100%;
     height: 200px;
     position: absolute;
@@ -20,7 +21,7 @@
   &__replay {
     position: absolute;
     left: 50%;
-    margin-left: -160px;
     bottom: 0;
+    margin-left: -160px;
   }
 }

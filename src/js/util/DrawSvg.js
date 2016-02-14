@@ -16,7 +16,7 @@ const getTotalLineLength = elem => {
 };
 
 export default class DrawSvg {
-  constructor(type, el) {
+  constructor(type, el, inOrder) {
     this.el = el;
     this.type = el.tagName;
     this.currentFrame = 0;
@@ -30,12 +30,17 @@ export default class DrawSvg {
     }
 
     // draw speed
-    if (this.elLength <= 100) {
-      this.totalFrame = 10;
-      this.duration = duration;
+    if (inOrder) {
+      if (this.elLength <= 100) {
+        this.totalFrame = 10;
+        this.duration = duration;
+      } else {
+        this.totalFrame = frame;
+        this.duration = duration;
+      }
     } else {
-      this.totalFrame = frame;
-      this.duration = duration;
+      this.totalFrame = 50;
+      this.duration = 0;
     }
 
     this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
