@@ -48,6 +48,6 @@
   "dependencies": {
     "jquery": "^2.2.0",
     "lodash.debounce": "^4.0.0",
-    "path-dispatcher": "^1.0.2"
+    "path-dispatcher": "^1.1.2"
   }
 }
