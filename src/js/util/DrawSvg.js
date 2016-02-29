@@ -1,49 +1,57 @@
 const frame = 25;
 const duration = 0.8;
 
-window.requestAnimFrame = (function() {
-  return (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function(callback) {
-      window.setTimeout(callback, 1000 / frame);
-    }
-  );
-})();
-
-window.cancelAnimFrame = (function() {
-  return (
-    window.cancelAnimationFrame ||
-    window.webkitCancelAnimationFrame ||
-    window.mozCancelAnimationFrame ||
-    window.oCancelAnimationFrame ||
-    window.msCancelAnimationFrame ||
-    function(id) {
-      window.clearTimeout(id);
-    }
-  );
-})();
-
 export default class DrawSvg {
-  constructor(type, el, inOrder) {
+  get el() {
+    return this._el;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  get currentFrame() {
+    return this._currentFrame;
+  }
+
+  set currentFrame(value) {
+    this._currentFrame = value;
+  }
+
+  get animationID() {
+    return this._animationID;
+  }
+
+  set animationID(value) {
+    this._animationID = value;
+  }
+
+  get elLength() {
+    return this._elLength;
+  }
+
+  get totalFrame() {
+    return this._totalFrame;
+  }
+
+  set totalFrame(value) {
+    this._totalFrame = value;
+  }
+
+  constructor(el, inOrder) {
     this._el = el;
     this._type = el.tagName;
     this._currentFrame = 0;
-
-    this._handle = 0;
-
-    if (this._type === 'path') {
-      this._elLength = el.getTotalLength();
-    } else if (this._type === 'line') {
-      this._elLength = this._getTotalLineLength(this._el);
+    this._animationID = null;
+    if (this.type === 'path') {
+      this._elLength = this.el.getTotalLength();
+    } else if (this.type === 'line') {
+      this._elLength = this._getTotalLineLength(this.el);
     }
 
     // draw speed
     if (inOrder) {
-      if (this._elLength <= 100) {
+      if (this.elLength <= 100) {
         this._totalFrame = 10;
         this.duration = duration;
       } else {
@@ -55,29 +63,29 @@ export default class DrawSvg {
       this.duration = 0;
     }
 
-    this._el.style.strokeDasharray = `${this._elLength} ${this._elLength}`;
-    this._el.style.strokeDashoffset = this._elLength;
+    this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
+    this.el.style.strokeDashoffset = this.elLength;
   }
 
   draw() {
-    this._el.style.opacity = 1; // stroke-linecapを使うとlinecapの部分が最初から表示されてしまうので、ここで表示させる
-    this.playAnimation();
+    this.el.style.opacity = 1; // stroke-linecapを使うとlinecapの部分が最初から表示されてしまうので、ここで表示させる
+    this.animate();
   }
 
   resetAnimation() {
-    this._el.style.strokeDashoffset = this._elLength;
-    this._currentFrame = 0;
+    this.el.style.strokeDashoffset = this.elLength;
+    this.currentFrame = 0;
   }
 
-  playAnimation() {
-    const progress = this._currentFrame / this._totalFrame;
+  animate() {
+    const progress = this.currentFrame / this.totalFrame;
     if (progress > 1) {
-      window.cancelAnimFrame(this._handle);
+      window.cancelAnimFrame(this.animationID);
     } else {
-      this._currentFrame++;
-      this._el.style.strokeDashoffset = Math.floor(this._elLength * (1 - progress));
-      this._handle = window.requestAnimFrame(() => {
-        this.playAnimation();
+      this.currentFrame++;
+      this.el.style.strokeDashoffset = Math.floor(this.elLength * (1 - progress));
+      this.animationID = window.requestAnimFrame(() => {
+        this.animate();
       });
     }
   }

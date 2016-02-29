@@ -25,6 +25,33 @@ let pathArr = [];
 let timerArr = [];
 let stageWrap;
 
+const frame = 25;
+window.requestAnimFrame = (function() {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      window.setTimeout(callback, 1000 / frame);
+    }
+  );
+})();
+
+window.cancelAnimFrame = (function() {
+  return (
+    window.cancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    function(id) {
+      window.clearTimeout(id);
+    }
+  );
+})();
+
 export default function top() {
   const createPath = (data, parent, color, inOrder) => {
     let pathElem;
@@ -49,7 +76,7 @@ export default function top() {
     }
     pathElem.style.display = 'block';
 
-    const rawElem = new DrawSvg(type, pathElem, inOrder);
+    const rawElem = new DrawSvg(pathElem, inOrder);
     pathArr.push(rawElem);
 
     parent.appendChild(pathElem);
