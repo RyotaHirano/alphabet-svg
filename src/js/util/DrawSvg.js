@@ -1,73 +1,93 @@
 const frame = 25;
 const duration = 0.8;
 
-const lineLength = (x1, y1, x2, y2) => {
-  const length = Math.sqrt((x2 -= x1) * x2 + (y2 -= y1) * y2);
-  return length;
-};
+window.requestAnimFrame = (function() {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) {
+      window.setTimeout(callback, 1000 / frame);
+    }
+  );
+})();
 
-const getTotalLineLength = elem => {
-  const x1 = elem.getAttributeNS(null, 'x1');
-  const y1 = elem.getAttributeNS(null, 'y1');
-  const x2 = elem.getAttributeNS(null, 'x2');
-  const y2 = elem.getAttributeNS(null, 'y2');
-
-  return lineLength(x1, y1, x2, y2);
-};
+window.cancelAnimFrame = (function() {
+  return (
+    window.cancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.oCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    function(id) {
+      window.clearTimeout(id);
+    }
+  );
+})();
 
 export default class DrawSvg {
   constructor(type, el, inOrder) {
-    this.el = el;
-    this.type = el.tagName;
-    this.currentFrame = 0;
+    this._el = el;
+    this._type = el.tagName;
+    this._currentFrame = 0;
 
-    this.handle = 0;
+    this._handle = 0;
 
-    if (this.type === 'path') {
-      this.elLength = el.getTotalLength();
-    } else if (this.type === 'line') {
-      this.elLength = getTotalLineLength(this.el);
+    if (this._type === 'path') {
+      this._elLength = el.getTotalLength();
+    } else if (this._type === 'line') {
+      this._elLength = this._getTotalLineLength(this._el);
     }
 
     // draw speed
     if (inOrder) {
-      if (this.elLength <= 100) {
-        this.totalFrame = 10;
+      if (this._elLength <= 100) {
+        this._totalFrame = 10;
         this.duration = duration;
       } else {
-        this.totalFrame = frame;
+        this._totalFrame = frame;
         this.duration = duration;
       }
     } else {
-      this.totalFrame = 50;
+      this._totalFrame = 50;
       this.duration = 0;
     }
 
-    this.el.style.strokeDasharray = `${this.elLength} ${this.elLength}`;
-    this.el.style.strokeDashoffset = this.elLength;
+    this._el.style.strokeDasharray = `${this._elLength} ${this._elLength}`;
+    this._el.style.strokeDashoffset = this._elLength;
   }
 
   draw() {
-    this.el.style.opacity = 1; // stroke-linecapを使うとlinecapの部分が最初から表示されてしまうので、ここで表示させる
+    this._el.style.opacity = 1; // stroke-linecapを使うとlinecapの部分が最初から表示されてしまうので、ここで表示させる
     this.playAnimation();
   }
 
   resetAnimation() {
-    this.el.style.strokeDashoffset = this.elLength;
-    this.currentFrame = 0;
+    this._el.style.strokeDashoffset = this._elLength;
+    this._currentFrame = 0;
   }
 
   playAnimation() {
-    const _this = this;
-    const progress = this.currentFrame / this.totalFrame;
+    const progress = this._currentFrame / this._totalFrame;
     if (progress > 1) {
-      window.cancelAnimFrame(this.handle);
+      window.cancelAnimFrame(this._handle);
     } else {
-      this.currentFrame++;
-      this.el.style.strokeDashoffset = Math.floor(this.elLength * (1 - progress));
-      this.handle = window.requestAnimFrame(function() {
-        _this.playAnimation();
+      this._currentFrame++;
+      this._el.style.strokeDashoffset = Math.floor(this._elLength * (1 - progress));
+      this._handle = window.requestAnimFrame(() => {
+        this.playAnimation();
       });
     }
+  }
+
+  _getTotalLineLength(elem) {
+    const x1 = elem.getAttributeNS(null, 'x1');
+    const y1 = elem.getAttributeNS(null, 'y1');
+    let x2 = elem.getAttributeNS(null, 'x2');
+    let y2 = elem.getAttributeNS(null, 'y2');
+
+    return Math.sqrt((x2 -= x1) * x2 + (y2 -= y1) * y2);
   }
 }

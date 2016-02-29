@@ -17,7 +17,6 @@ const loadingText = 'ALPHABETSVG';
 
 const xmlns = 'http://www.w3.org/2000/svg';
 const charaWidth = 150;
-const frame = 25;
 let beforeChara;
 let svgLeft = 0;
 let count = 0;
@@ -25,32 +24,6 @@ let pathCount;
 let pathArr = [];
 let timerArr = [];
 let stageWrap;
-
-window.requestAnimFrame = (function() {
-  return (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function(callback) {
-      window.setTimeout(callback, 1000 / frame);
-    }
-  );
-})();
-
-window.cancelAnimFrame = (function() {
-  return (
-    window.cancelAnimationFrame ||
-    window.webkitCancelAnimationFrame ||
-    window.mozCancelAnimationFrame ||
-    window.oCancelAnimationFrame ||
-    window.msCancelAnimationFrame ||
-    function(id) {
-      window.clearTimeout(id);
-    }
-  );
-})();
 
 export default function top() {
   const createPath = (data, parent, color, inOrder) => {
